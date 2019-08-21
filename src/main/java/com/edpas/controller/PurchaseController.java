@@ -1,6 +1,7 @@
 package com.edpas.controller;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.edpas.dto.FilterPurchaseDTO;
 import com.edpas.exception.ModelNotFoundException;
 import com.edpas.model.Purchase;
 import com.edpas.service.IPurchaseService;
@@ -69,4 +71,17 @@ public class PurchaseController {
 		return new ResponseEntity<Object>(object, HttpStatus.OK);
 	}
 	
+	@PostMapping("/search")
+	public ResponseEntity<List<Purchase>> search(@RequestBody FilterPurchaseDTO filterPurchaseDTO) {
+		List<Purchase> purchases = new ArrayList<>();
+		if (filterPurchaseDTO != null) {
+			if (filterPurchaseDTO.getDate() != null) {
+				purchases = this.purchaseService.searchByDates(filterPurchaseDTO);
+			}
+			else {
+				purchases = this.purchaseService.searchByDriverLicenseAndFullName(filterPurchaseDTO);
+			}
+		}
+		return new ResponseEntity<List<Purchase>>(purchases, HttpStatus.OK);
+	}
 }

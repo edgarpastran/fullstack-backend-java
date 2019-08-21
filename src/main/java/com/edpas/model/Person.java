@@ -42,7 +42,7 @@ public class Person {
 	@Column(name = "telephone", nullable = true, length = 10)
 	private String telephone;
 	
-	@Email
+	@Email(message = "Email is not valid")
 	@Column(name = "email", nullable = true, length = 50)
 	private String email;
 	
