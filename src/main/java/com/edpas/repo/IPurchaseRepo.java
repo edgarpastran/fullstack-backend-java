@@ -16,4 +16,31 @@ public interface IPurchaseRepo extends JpaRepository<Purchase, Integer> {
 	
 	@Query("FROM Purchase purchase WHERE purchase.date BETWEEN :date AND :nextDate")
 	public List<Purchase> searchByDates(@Param("date")LocalDateTime date, @Param("nextDate")LocalDateTime nextDate);
+
+	/* 
+	 * FUNCTION ON POSTGRESQL
+	 * ======== == =========
+  	CREATE OR REPLACE FUNCTION fn_list_purchases () 
+		RETURNS TABLE (
+		 quantity INT,
+		 date TEXT
+		) 
+	AS $$
+	DECLARE 
+	    var_r record;
+	BEGIN
+	FOR var_r IN(
+		select (count(*)::int) as quantity, to_char(p.date, 'MM/dd/yyyy') as date from purchase p 
+		group by to_char(p.date, 'MM/dd/yyyy') order by to_char(p.date, 'MM/dd/yyyy') asc 
+		)  
+	 LOOP
+        quantity := var_r.quantity; 
+ 		date := var_r.date;
+        RETURN NEXT;
+	 END LOOP;
+	END; $$ 
+	LANGUAGE 'plpgsql';
+	 */
+	@Query(value = "SELECT * FROM fn_list_purchases()", nativeQuery = true)
+	public List<Object[]> listPurchaseSummary();
 }

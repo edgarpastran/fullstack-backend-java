@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.edpas.dto.FilterPurchaseDTO;
+import com.edpas.dto.PurchaseSummaryDTO;
 import com.edpas.exception.ModelNotFoundException;
 import com.edpas.model.Purchase;
 import com.edpas.service.IPurchaseService;
@@ -83,5 +85,18 @@ public class PurchaseController {
 			}
 		}
 		return new ResponseEntity<List<Purchase>>(purchases, HttpStatus.OK);
+	}
+	
+	@GetMapping("/listPurchaseSummary")
+	public ResponseEntity<List<PurchaseSummaryDTO>> listPurchaseSummary() {
+		List<PurchaseSummaryDTO> list = new ArrayList<PurchaseSummaryDTO>();
+		list = this.purchaseService.listPurchaseSummary();
+		return new ResponseEntity<List<PurchaseSummaryDTO>>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/reportPurchaseSummary", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<byte[]> reportPurchaseSummary() {
+		byte[] report = this.purchaseService.generateReportPurchaseSummary();
+		return new ResponseEntity<byte[]>(report, HttpStatus.OK);
 	}
 }
