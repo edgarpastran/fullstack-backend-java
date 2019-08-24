@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.edpas.dto.FilterPurchaseDTO;
@@ -26,6 +29,7 @@ public class PurchaseService implements IPurchaseService {
 	@Autowired
 	private IPurchaseRepo purchaseRepo;
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.insert')")
 	@Override
 	public Purchase insert(Purchase object) {
 		object.getPurchaseDetails().forEach(detail -> {
@@ -34,37 +38,44 @@ public class PurchaseService implements IPurchaseService {
 		return this.purchaseRepo.save(object);
 	}
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.update')")
 	@Override
 	public Purchase update(Purchase object) {
 		return this.purchaseRepo.save(object);
 	}
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.delete')")
 	@Override
 	public void delete(Integer id) {
 		this.purchaseRepo.delete(id);
 	}
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.getOne')")
 	@Override
 	public Purchase getOne(Integer id) {
 		return this.purchaseRepo.findOne(id);
 	}
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.getAll')")
 	@Override
 	public List<Purchase> getAll() {
 		return this.purchaseRepo.findAll();
 	}
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.searchByDriverLicenseAndFullName')")
 	@Override
 	public List<Purchase> searchByDriverLicenseAndFullName(FilterPurchaseDTO filterPurchaseDTO) {
 		return this.purchaseRepo.searchByDriverLicenseAndFullName(filterPurchaseDTO.getDriverLicense(), filterPurchaseDTO.getFullName());
 	}
 
+	@PreAuthorize("@restAuthService.hasAccess('purchase.searchByDates')")
 	@Override
 	public List<Purchase> searchByDates(FilterPurchaseDTO filterPurchaseDTO) {	
 		LocalDateTime nextDate = filterPurchaseDTO.getDate().plusDays(1);
 		return this.purchaseRepo.searchByDates(filterPurchaseDTO.getDate(), nextDate);
 	}
 	
+	@PreAuthorize("@restAuthService.hasAccess('purchase.listPurchaseSummary')")
 	@Override
 	public List<PurchaseSummaryDTO> listPurchaseSummary() {
 		List<PurchaseSummaryDTO> list = new ArrayList<PurchaseSummaryDTO>();
@@ -77,6 +88,7 @@ public class PurchaseService implements IPurchaseService {
 		return list;
 	}
 	
+	@PreAuthorize("@restAuthService.hasAccess('purchase.generateReportPurchaseSummary')")
 	@Override
 	public byte[] generateReportPurchaseSummary() {
 		byte[] report = null;
@@ -90,6 +102,12 @@ public class PurchaseService implements IPurchaseService {
 			e.printStackTrace();
 		}		
 		return report;
+	}
+
+	@PreAuthorize("@restAuthService.hasAccess('purchase.listPageable')")
+	@Override
+	public Page<Purchase> listPageable(Pageable pageable) {
+		return this.purchaseRepo.findAll(pageable);
 	}
 	
 }

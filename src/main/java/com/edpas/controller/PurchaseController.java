@@ -7,6 +7,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,12 @@ public class PurchaseController {
 	public ResponseEntity<List<Purchase>> list() {
 		List<Purchase> list = this.purchaseService.getAll();
 		return new ResponseEntity<List<Purchase>>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping("/pageable")
+	public ResponseEntity<Page<Purchase>> listPageable(Pageable pageable) {
+		Page<Purchase> list = this.purchaseService.listPageable(pageable);
+		return new ResponseEntity<Page<Purchase>>(list, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")

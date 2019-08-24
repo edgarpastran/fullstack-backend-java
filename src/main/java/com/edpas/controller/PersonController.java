@@ -6,6 +6,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +35,12 @@ public class PersonController {
 	public ResponseEntity<List<Person>> list() {
 		List<Person> list = this.personService.getAll();
 		return new ResponseEntity<List<Person>>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping("/pageable")
+	public ResponseEntity<Page<Person>> listPageable(Pageable pageable) {
+		Page<Person> list = this.personService.listPageable(pageable);
+		return new ResponseEntity<Page<Person>>(list, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")

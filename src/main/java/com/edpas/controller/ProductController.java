@@ -6,6 +6,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.edpas.exception.ModelNotFoundException;
-import com.edpas.model.Person;
 import com.edpas.model.Product;
 import com.edpas.service.IProductService;
 
@@ -34,6 +35,12 @@ public class ProductController {
 	public ResponseEntity<List<Product>> list() {
 		List<Product> list = this.productService.getAll();
 		return new ResponseEntity<List<Product>>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping("/pageable")
+	public ResponseEntity<Page<Product>> listPageable(Pageable pageable) {
+		Page<Product> list = this.productService.listPageable(pageable);
+		return new ResponseEntity<Page<Product>>(list, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")

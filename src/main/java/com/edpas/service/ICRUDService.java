@@ -2,7 +2,8 @@ package com.edpas.service;
 
 import java.util.List;
 
-import com.edpas.model.Person;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ICRUDService<T> {
 
@@ -15,4 +16,6 @@ public interface ICRUDService<T> {
 	public T getOne(Integer id);
 	
 	public List<T> getAll();
+	
+	public Page<T> listPageable(Pageable pageable);
 }
